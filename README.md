@@ -1,111 +1,108 @@
 # Agent Scratchpad Synthesizer
 
-> **Domain:** Autonomous Agent Systems & Context State Architecture  
-> **Reference Guidelines & Standards:** `Distributed Systems RFC & State Machine Verification`
+A pure Python production-grade structured working memory and chain-of-thought derivation engine implementing:
+- Isolated scratchpad working memory with priority-based eviction and bounded retention.
+- Multi-branch thought exploration (branching, hypothesis evaluation, and path merging).
+- Semantic context compression (summarizing intermediate derivations to prevent context window bloat).
+- Priority-weighted relevance retrieval combining Jaccard term similarity with derivation priority:
+  $$\text{Score} = 0.7 \times \text{Similarity}(\text{query}, \text{entry}) + 0.3 \times \text{Priority}$$
+- Structured thought synthesis across derivation branches into actionable consensus findings.
+- Supervisory multi-agent telemetry auditing across analytical reasoning workflows.
 
-<div align="center">
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-3776AB.svg?logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688.svg?logo=fastapi&logoColor=white)
-![Audit Trail](https://img.shields.io/badge/Audit-HMAC--SHA256_Tamper--Evident-brightgreen.svg)
-![Zero-PHI Guard](https://img.shields.io/badge/Guard-Zero--PHI_Outbound-blue.svg)
-![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?logo=docker&logoColor=white)
-
-</div>
+Requires Python standard library only (zero external runtime dependencies).
 
 ---
 
-## 📖 What It Does
+## Features
 
-**Agent Scratchpad Synthesizer** is an advanced analytical and computational platform implementing Isolated scratchpad working memory for intermediate mathematical/clinical derivations.
-
----
-
-## ⚙️ Key Capabilities & Algorithmic Modules
-
-### 🔬 Core Algorithmic & Evaluation Engines
-
-- **`EntryType`** — dedicated module for entry type evaluation and state verification.
-- **`ScratchpadEntry`** — dedicated module for scratchpad entry evaluation and state verification.
-- **`ScratchpadBranch`** — dedicated module for scratchpad branch evaluation and state verification.
-- **`SynthesisResult`** — dedicated module for synthesis result evaluation and state verification.
-- **`WorkingMemory`**: Manages scratchpad entries with priority-based eviction and max entry limits.
-- **`ContextCompressor`**: Compresses old scratchpad entries via summarization.
+- **Priority Working Memory:** Manages categorized scratchpad entries (`thought`, `observation`, `derivation`, `hypothesis`, `verification`, `synthesis`) with bounded memory limits.
+- **Context Compression:** Periodically compresses long scratchpad records into concise derivation summaries while preserving high-priority conclusions.
+- **Branching Exploration:** Supports tree-like exploration of alternative reasoning paths without corrupting main derivation state.
+- **Relevance Retrieval:** Fast in-memory similarity lookup identifying earlier related observations and equations.
+- **Batch CSV Processing:** High-throughput validation and telemetry auditing for derivation tasks.
 
 ---
 
-## 📐 Mathematical Formulation & Logic
+## Installation & Requirements
 
-```text
-  score = similarity * 0.7 + entry.priority * 0.3
-```
+- Python 3.10+ (tested on 3.10, 3.11, 3.12)
+- Zero external runtime dependencies. `pytest` is optional for running tests.
 
----
-
-## 💻 CLI Quickstart & Usage
-
-### 1. Guided Interactive Mode
 ```bash
-python cli.py
+git clone https://github.com/abusuraihsakhri/agent-scratchpad-synthesizer.git
+cd agent-scratchpad-synthesizer
 ```
 
-### 2. Direct Parameterized Evaluation
+---
+
+## CLI Usage
+
+### 1. Add Entry to Scratchpad
 ```bash
-python cli.py --type <value> --content <value> --priority <value> --max-entries <value>
+python cli.py add --type derivation --content "E = mc^2 verified under standard relativistic conditions" --priority 0.8
 ```
 
-### Parameter Reference
-- `--type`: Specifies input measurement or parameter value.
-- `--content`: Specifies input measurement or parameter value.
-- `--priority`: Specifies input measurement or parameter value.
-- `--max-entries`: Specifies input measurement or parameter value.
-- `--query`: Specifies input measurement or parameter value.
-- `--top-k`: Specifies input measurement or parameter value.
-- `--strategy`: Specifies input measurement or parameter value.
+### 2. Query Scratchpad Derivations
+```bash
+python cli.py query --query "relativistic" --top-k 3
+```
 
-### Input Data Schema
+### 3. Synthesize Working Memory
+Synthesize entries across the active scratchpad:
+```bash
+python cli.py synthesize --strategy consensus
+```
 
-| Field | Description | Requirement |
-|:------|:------------|:------------|
-| `task_id` | Parameter / observation metric | Required |
-| `target_identifier` | Parameter / observation metric | Required |
-| `primary_metric` | Parameter / observation metric | Required |
-| `secondary_metric` | Parameter / observation metric | Required |
-| `is_critical_flag` | Parameter / observation metric | Required |
-| `status_descriptor` | Parameter / observation metric | Required |
+### 4. Inspect Scratchpad Status
+```bash
+python cli.py status
+```
 
----
+### 5. Multi-Agent Supervisory Audit
+Run supervisory audit with JSON output:
+```bash
+python scratchpad_mind_app.py audit --task-id TASK-2026-001 --primary 29.4 --secondary 15.1 --json
+```
 
-## 🛡️ Security & Enterprise Architecture
-
-* **Zero-PHI Outbound Interceptor:** Active AST and regex inspection blocking SSNs, MRNs, phone numbers, and patient identifiers.
-* **Tamper-Evident HMAC-SHA256 Audit Trail:** Chained, cryptographically signed logs for every evaluation and state transition.
-* **Air-Gapped LLM Reasoning Adapter:** Agnostic integration for local Ollama instances (`llama3`, `mistral`), Claude 3.5 Sonnet, GPT-4o, and deterministic test mocks.
-* **Active Learning Bayesian Calibration:** Dynamic tracker updating worker reliability weights and monitoring Brier calibration drift.
-* **FastAPI & Prometheus Telemetry:** Exposes OpenAPI 3.1 REST endpoints and operational Prometheus metrics (`/metrics`).
+### 6. Batch CSV Processing
+Batch process records and generate synthesis reports:
+```bash
+python scratchpad_mind_app.py batch -i sample.csv -o results.csv
+```
 
 ---
 
-## 🧪 Testing & Verification
+## Python API Quickstart
 
-Run the automated test suite:
+```python
+from scratchpad_engine import (
+    ScratchpadSynthesizer,
+    EntryType,
+)
+
+# 1. Initialize Synthesizer
+synth = ScratchpadSynthesizer(max_entries=50, compress_after=10)
+
+# 2. Add thoughts and derivations
+synth.add_thought("Investigating initial clinical symptoms.", priority=0.6)
+synth.add_thought("Lab results indicate elevated lipase levels.", entry_type=EntryType.OBSERVATION, priority=0.8)
+
+# 3. Explore alternative branch
+branch = synth.create_branch("DifferentialDiagnosis")
+synth.add_thought("Consider acute pancreatitis vs cholecystitis.", branch=branch.id, priority=0.9)
+
+# 4. Synthesize conclusions
+result = synth.synthesize(branch=branch.id)
+print(f"Synthesized {result.entry_count} entries into summary: {result.summary}")
+```
+
+---
+
+## Running Tests
+
+Run the test suite using standard `unittest` or `pytest`:
 
 ```bash
 pytest -v
 ```
 
-Execute high-throughput batch simulation benchmarks:
-
-```bash
-python simulator.py --tasks 1000 --concurrency 8
-```
-
----
-
-## 🐳 Container Deployment
-
-```bash
-docker build -t agent-scratchpad-synthesizer .
-docker run -p 8000:8000 agent-scratchpad-synthesizer
-```
